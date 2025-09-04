@@ -49,6 +49,7 @@ To install and compile the Pipex project:
 
 ## Usage
 
+### Mandatory Part
 The program must be executed with exactly 4 arguments:
 
 ```bash
@@ -66,6 +67,45 @@ The program behaves exactly like the shell command:
 ```bash
 < file1 cmd1 | cmd2 > file2
 ```
+
+### Bonus Features
+
+#### 1. Multiple Pipes Support
+Handle multiple commands in a pipeline:
+
+```bash
+./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2
+```
+
+**Behavior:**
+Equivalent to: `< file1 cmd1 | cmd2 | cmd3 ... | cmdn > file2`
+
+**Example:**
+```bash
+./pipex input.txt "cat" "grep hello" "wc -l" output.txt
+# Equivalent to: < input.txt cat | grep hello | wc -l > output.txt
+```
+
+#### 2. Here Document Support
+Support `<<` and `>>` redirections:
+
+```bash
+./pipex here_doc LIMITER cmd1 cmd2 file
+```
+
+**Behavior:**
+Equivalent to: `cmd1 << LIMITER | cmd2 >> file`
+
+**Example:**
+```bash
+./pipex here_doc EOF "cat" "wc -l" output.txt
+# Equivalent to: cat << EOF | wc -l >> output.txt
+```
+
+### Compilation
+- **Mandatory**: `make` (creates `pipex` from `mandatory/` directory)
+- **Bonus**: `make bonus` (creates `pipex_bonus` from `bonus/` directory)
+- **Both**: `make all` and `make bonus` to build both versions
 
 ## Features
 
@@ -98,14 +138,31 @@ The program behaves exactly like the shell command:
 
 ```
 pipex/
-├── Makefile          # Build configuration
-├── pipex.h           # Header file with declarations
-├── pipex.c           # Main program file
-├── utils.c           # Utility functions
-├── process.c         # Process management functions
-├── path.c            # Path resolution functions
-├── libft.c           # Custom string functions
-└── README.md         # This file
+├── Makefile              # Build configuration
+├── pipex.h               # Header file with declarations
+├── mandatory/            # Mandatory part files
+│   ├── pipex.c          # Main program file
+│   ├── utils.c          # Utility functions
+│   ├── process.c        # Process management functions
+│   └── path.c           # Path resolution functions
+├── bonus/               # Bonus part files
+│   ├── pipex_bonus.c    # Bonus main program
+│   ├── pipex_bonus.h    # Bonus header file
+│   ├── multiple_pipes.c # Multiple pipes support
+│   ├── execute_commands.c # Command execution
+│   ├── here_doc.c       # Here document support
+│   ├── bonus_utils.c    # Bonus utility functions
+│   └── get_next_line.c  # Line reading function
+├── libft/               # libft library
+│   ├── Makefile         # libft build configuration
+│   ├── libft.h          # libft header
+│   ├── ft_strlen.c      # String length function
+│   ├── ft_strjoin.c     # String join function
+│   ├── ft_strlcpy.c     # String copy function
+│   ├── ft_strncmp.c     # String compare function
+│   ├── ft_strnstr.c     # String search function
+│   └── ft_split.c       # String split function
+└── README.md            # This file
 ```
 
 ## How It Works

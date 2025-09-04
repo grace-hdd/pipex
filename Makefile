@@ -11,42 +11,56 @@
 # **************************************************************************** #
 
 NAME = pipex
+BONUS_NAME = pipex_bonus
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 INCLUDES = -I.
 
-SRCDIR = src
-OBJDIR = obj
+# Mandatory sources
+MANDATORY_SOURCES = pipex.c \
+					utils.c \
+					process.c \
+					path.c
 
-SOURCES = pipex.c \
-		  utils.c \
-		  process.c \
-		  path.c
+# Bonus sources
+BONUS_SOURCES = pipex_bonus.c \
+				multiple_pipes.c \
+				execute_commands.c \
+				here_doc.c \
+				bonus_utils.c \
+				get_next_line.c
 
-SRCS = $(addprefix $(SRCDIR)/, $(SOURCES))
-OBJS = $(addprefix $(OBJDIR)/, $(SOURCES:.c=.o))
+# Object files
+MANDATORY_OBJS = $(addprefix mandatory/, $(MANDATORY_SOURCES:.c=.o))
+BONUS_OBJS = $(addprefix bonus/, $(BONUS_SOURCES:.c=.o))
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
-	$(MAKE) -C libft
-	$(CC) $(CFLAGS) $(OBJS) -Llibft -lft -o $(NAME)
+bonus: $(BONUS_NAME)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+$(NAME): $(MANDATORY_OBJS)
+	$(MAKE) -C libft
+	$(CC) $(CFLAGS) $(MANDATORY_OBJS) -Llibft -lft -o $(NAME)
+
+$(BONUS_NAME): $(BONUS_OBJS)
+	$(MAKE) -C libft
+	$(CC) $(CFLAGS) $(BONUS_OBJS) -Llibft -lft -o $(BONUS_NAME)
+
+mandatory/%.o: mandatory/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
+bonus/%.o: bonus/%.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm -rf $(OBJDIR)
+	rm -f $(MANDATORY_OBJS) $(BONUS_OBJS)
 	$(MAKE) -C libft clean
 
 fclean: clean
-	rm -f $(NAME)
+	rm -f $(NAME) $(BONUS_NAME)
 	$(MAKE) -C libft fclean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all bonus clean fclean re
